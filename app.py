@@ -5,6 +5,7 @@ from youtube_transcript_api import YouTubeTranscriptApi
 import re
 import os
 from dotenv import load_dotenv
+import markdown
 
 # Load environment variables
 load_dotenv()
@@ -53,7 +54,7 @@ def get_transcript(video_id):
         else:
             raise ValueError(f"Could not fetch transcript: {error_msg}")
 
-def summarize_text(text):
+def summarize_text(text,url):
     """Summarize text using Gemini"""
     model = genai.GenerativeModel('gemini-2.0-flash')
     prompt = f"""You are a note-taking assistant skilled in summarizing educational video content.
@@ -64,7 +65,7 @@ Include the following information in this order:
 
 1. **Video Information**
     - Title of the video
-    - YouTube link
+    - YouTube link: {url}
     - Creator or channel name
     - Names of the main speaker(s) and guest(s)
 
@@ -104,7 +105,7 @@ def handle_request():
         
         video_id = extract_video_id(data['url'])
         transcript = get_transcript(video_id)
-        summary = summarize_text(transcript)
+        summary = summarize_text(transcript,data['url'])
         
         response = jsonify({"summary": summary})
         response.headers.add('Access-Control-Allow-Origin', '*')

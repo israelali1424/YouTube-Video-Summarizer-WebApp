@@ -13,7 +13,7 @@ def get_video_id(url):
     raise ValueError("Invalid YouTube URL")
 
 # Example video URL
-url = "https://www.youtube.com/watch?v=atORPw-w83I"
+url = "https://www.youtube.com/watch?v=3HjPHSWWSB8"
 video_id = get_video_id(url)
 
 # Get transcript
