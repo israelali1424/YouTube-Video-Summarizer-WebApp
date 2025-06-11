@@ -4,6 +4,11 @@
 .env.development
 .env.test
 .env.production
+/frontend/.env
+/frontend/.env.local
+/frontend/.env.development
+/frontend/.env.test
+/frontend/.env.production
 
 # Python
 __pycache__/

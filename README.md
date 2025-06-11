@@ -78,17 +78,31 @@ Speakers: [List of main speaker(s) and guest(s)]
 
 ## Environment Variables
 
-### Backend (.env)
+The application requires two separate `.env` files:
+
+### Backend (.env in root directory)
+
+Create a `.env` file in the root directory of the project with:
 
 ```
 GOOGLE_API_KEY=your_google_api_key
 ```
 
-### Frontend (.env)
+### Frontend (.env in frontend directory)
+
+Create a `.env` file in the `frontend` directory with:
 
 ```
-REACT_APP_API_URL=your_backend_url
+REACT_APP_API_URL=https://youtube-video-summarizer-webapp.onrender.com
 ```
+
+Important notes about environment variables:
+
+- Both `.env` files are automatically ignored by git
+- Frontend environment variables must start with `REACT_APP_` to be recognized
+- No spaces around the `=` sign
+- No quotes around the values
+- No trailing spaces
 
 ## Installation
 
