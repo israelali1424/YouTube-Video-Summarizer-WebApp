@@ -21,7 +21,8 @@ function App() {
   const [currentBackendUrl, setCurrentBackendUrl] = useState(() => {
     const apiUrl = process.env.REACT_APP_API_URL;
     console.log("Setting initial backend URL to:", apiUrl);
-    return apiUrl || "http://localhost:8000";
+    // Ensure the URL doesn't end with a slash
+    return apiUrl ? apiUrl.replace(/\/$/, "") : "http://localhost:8000";
   });
 
   // Add this console log to help debug
@@ -78,15 +79,44 @@ function App() {
     setSummary("");
 
     try {
-      console.log("Sending request to:", `${currentBackendUrl}/`);
-      const response = await fetch(`${currentBackendUrl}/`, {
+      const requestUrl = `${currentBackendUrl}/`;
+      console.log("Sending request to:", requestUrl);
+
+      // First, try a simple GET request to check if the server is accessible
+      try {
+        const healthCheck = await fetch(requestUrl, {
+          method: "GET",
+          headers: {
+            Accept: "application/json",
+          },
+        });
+        console.log(
+          "Health check response:",
+          healthCheck.status,
+          healthCheck.statusText
+        );
+      } catch (healthError) {
+        console.error("Health check failed:", healthError);
+      }
+
+      // Then make the actual POST request
+      const response = await fetch(requestUrl, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Accept: "application/json",
+          Origin: window.location.origin,
         },
+        mode: "cors",
+        credentials: "omit",
         body: JSON.stringify({ url: url }),
       });
+
+      console.log("Response status:", response.status);
+      console.log(
+        "Response headers:",
+        Object.fromEntries(response.headers.entries())
+      );
 
       if (!response.ok) {
         const errorData = await response
@@ -100,8 +130,12 @@ function App() {
 
       const data = await response.json();
       setSummary(data.summary);
-    } catch (err) {
-      console.error("Fetch error:", err);
+    } catch (err: unknown) {
+      console.error("Fetch error details:", {
+        name: err instanceof Error ? err.name : "Unknown",
+        message: err instanceof Error ? err.message : String(err),
+        stack: err instanceof Error ? err.stack : undefined,
+      });
       setError(
         err instanceof Error
           ? err.message
